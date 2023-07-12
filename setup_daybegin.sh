@@ -35,29 +35,35 @@ fi
 # Clone the Daybegin repository from GitHub to ~/.daybegin
 git clone https://github.com/lewisflude/.daybegin.git "$(expand_tilde "~/.daybegin")"
 
-# Determine the user's shell
-if [[ "$SHELL" == *"/bash"* ]]; then
-    echo "Setting up Daybegin for Bash..."
-    backup_file "$(expand_tilde "$HOME/.bashrc")"
-    echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.bashrc")"
-    echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.bashrc")"
+# Check if Bash is available
+if [ -n "$BASH_VERSION" ]; then
+  echo "Setting up Daybegin for Bash..."
+  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.bashrc
+  echo "source ~/.daybegin/daybegin.sh" >> ~/.bashrc
 fi
 
-if [[ "$SHELL" == *"/zsh"* ]]; then
-    echo "Setting up Daybegin for Zsh..."
-    backup_file "$(expand_tilde "$HOME/.zshrc")"
-    echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.zshrc")"
-    echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.zshrc")"
-    if [ -f "$(expand_tilde "$HOME/.zshrc")" ]; then
-        echo "source $(expand_tilde "~/.zshrc")" >> "$(expand_tilde "$HOME/.zshrc")"
-    fi
+# Check if Zsh is available
+if [ -n "$ZSH_VERSION" ]; then
+  echo "Setting up Daybegin for Zsh..."
+  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.zshrc
+  echo "source ~/.daybegin/daybegin.sh" >> ~/.zshrc
+  echo "source ~/.zshrc" >> ~/.zshrc
 fi
 
-if [[ "$SHELL" == *"/fish"* ]]; then
-    echo "Setting up Daybegin for Fish..."
-    backup_file "$(expand_tilde "$HOME/.config/fish/config.fish")"
-    echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
-    echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
+# Check if Fish is available
+if command -v fish >/dev/null 2>&1; then
+  echo "Setting up Daybegin for Fish..."
+  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.config/fish/config.fish
+  echo "source ~/.daybegin/daybegin.sh" >> ~/.config/fish/config.fish
 fi
 
 echo "Daybegin setup complete! You can now use the 'daybegin' command to run Daybegin."
+
+# Source the updated shell configuration
+if [ -n "$BASH_VERSION" ]; then
+  source ~/.bashrc
+fi
+
+if [ -n "$ZSH_VERSION" ]; then
+  source ~/.zshrc
+fi
