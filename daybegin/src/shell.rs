@@ -1,28 +1,20 @@
-use anyhow::{Context, Result};
-use log::info;
-use std::process::{Command, Output};
+use std::{
+    io::{self, Write},
+    process::Command,
+};
 
-pub fn execute_shell_command(command: &str) -> Result<()> {
-    info!("Executing shell command: {}", command);
+pub fn execute_shell_command(command: &str) -> io::Result<()> {
+    let output = Command::new("sh").arg("-c").arg(command).output()?;
 
-    let mut shell = Command::new("sh");
-    shell.arg("-c").arg(command);
-    shell.stdout(std::process::Stdio::inherit());
-    shell.stderr(std::process::Stdio::inherit());
+    io::stdout().write_all(&output.stdout)?;
+    io::stderr().write_all(&output.stderr)?;
 
-    let output = shell
-        .output()
-        .with_context(|| format!("Failed to execute shell command: {}", command))?;
-    log_output(output)?;
-
-    Ok(())
-}
-
-fn log_output(output: Output) -> Result<()> {
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        anyhow::bail!("Shell command failed: {}", stderr);
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("Command failed: {}", command),
+        ))
     }
-
-    Ok(())
 }

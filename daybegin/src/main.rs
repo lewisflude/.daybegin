@@ -98,9 +98,7 @@ fn wait_for_applications(config: &Config) -> Result<(), anyhow::Error> {
 
 fn execute_shell_commands(config: &Config) -> Result<()> {
     for command in &config.shell_commands {
-        shell::execute_shell_command(command)
-            .with_context(|| format!("Failed to execute shell command: {}", command))?;
-        info!("Shell command {} executed", command);
+        let _ = shell::execute_shell_command(command);
     }
     Ok(())
 }
