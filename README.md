@@ -21,9 +21,11 @@ Let's get started with Daybegin! Follow these simple steps to set it up on your 
 
 ### Installation
 
-1. Clone the Daybegin repository to your local machine.
-2. Navigate to the project directory: `cd daybegin`.
-3. Build the project using Cargo: `cargo build --release`.
+To install Daybegin, simply run the following command in your terminal:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/lewisflude/.daybegin/main/setup_daybegin.sh)"
+
 
 ## Usage
 
@@ -38,3 +40,4 @@ We welcome contributions from everyone! If you'd like to contribute to Daybegin,
 - Fork the repository and create a new branch for your feature or bug fix.
 - Make your changes and ensure the code passes all tests.
 - Submit a pull request with a clear description of your changes.
+```
