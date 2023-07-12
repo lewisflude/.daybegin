@@ -1,13 +1,14 @@
-# Read the root_dir value from config.toml and expand the tilde
-root_dir=$(toml get $HOME/.daybegin/config.toml root_dir | tr -d '"' | sed "s#^~#$HOME#")
+# Set the default root_dir
+root_dir="$HOME/.daybegin"
 
-# Set the default root_dir if config.toml doesn't exist
-if [ -z "$root_dir" ]; then
-    root_dir="$HOME/.daybegin"
+# Check if config.toml exists
+if [ -f "$root_dir/config.toml" ]; then
+    # Read the root_dir value from config.toml and expand the tilde
+    root_dir=$(toml get "$root_dir/config.toml" root_dir | tr -d '"' | sed "s#^~#$HOME#")
 fi
 
 # Read the desired directory from config.toml
-desired_dir=$(sed -n -e 's/^work_dir *= *"\(.*\)"/\1/p' "$root_dir/config.toml")
+desired_dir=$(sed -n -e 's/^work_dir *= *"\(.*\)"/\1/p' "$root_dir/config.toml" 2>/dev/null)
 
 # Expand the tilde to the user's home directory
 desired_dir=${desired_dir/#\~/$HOME}
