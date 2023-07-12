@@ -1,0 +1,18 @@
+[package]
+name = "daybegin"
+version = "0.1.0"
+authors = ["Lewis Flude <lewis@lewisflude.com>"]
+edition = "2021"
+
+[dependencies]
+config = "0.10.1"
+clap = "2.33.3"
+log = "0.4.14"
+env_logger = "0.8.3"
+anyhow = "1.0.40"
+toml = "0.7.6"
+serde = { version = "1.0.171", features = ["derive"] }
+dirs = "5.0.1"
+structopt = "0.3.26"
+clap-verbosity-flag = "2.0.1"
+shellexpand = "3.1.0"
