@@ -49,7 +49,9 @@ if [ -n "$ZSH_VERSION" ]; then
     backup_file "$(expand_tilde "$HOME/.zshrc")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.zshrc")"
     echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.zshrc")"
-    echo "source $(expand_tilde "~/.zshrc")" >> "$(expand_tilde "$HOME/.zshrc")"
+    if [ -f "$(expand_tilde "$HOME/.zshrc")" ]; then
+        echo "source $(expand_tilde "~/.zshrc")" >> "$(expand_tilde "$HOME/.zshrc")"
+    fi
 fi
 
 # Check if Fish is available
