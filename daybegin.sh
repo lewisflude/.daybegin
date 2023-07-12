@@ -20,5 +20,12 @@ manifest_path="$root_dir/daybegin/Cargo.toml"
 
 echo "manifest_path: $manifest_path"
 
-# Run the Rust program
-cargo run --manifest-path "$manifest_path" --bin daybegin
+# Check if the program is already built
+program_path="$root_dir/daybegin/target/release/daybegin"
+if [ ! -f "$program_path" ]; then
+    echo "Building the Rust program..."
+    cargo build --manifest-path "$manifest_path" --release
+fi
+
+# Run the built program
+"$program_path"
