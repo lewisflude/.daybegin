@@ -35,16 +35,15 @@ fi
 # Clone the Daybegin repository from GitHub to ~/.daybegin
 git clone https://github.com/lewisflude/.daybegin.git "$(expand_tilde "~/.daybegin")"
 
-# Check if Bash is the current shell
-if [[ "$(basename "$0")" == "bash" ]]; then
+# Determine the user's shell
+if [[ "$SHELL" == *"/bash"* ]]; then
     echo "Setting up Daybegin for Bash..."
     backup_file "$(expand_tilde "$HOME/.bashrc")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.bashrc")"
     echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.bashrc")"
 fi
 
-# Check if Zsh is the current shell
-if [[ "$(basename "$0")" == "zsh" ]]; then
+if [[ "$SHELL" == *"/zsh"* ]]; then
     echo "Setting up Daybegin for Zsh..."
     backup_file "$(expand_tilde "$HOME/.zshrc")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.zshrc")"
@@ -52,24 +51,13 @@ if [[ "$(basename "$0")" == "zsh" ]]; then
     if [ -f "$(expand_tilde "$HOME/.zshrc")" ]; then
         echo "source $(expand_tilde "~/.zshrc")" >> "$(expand_tilde "$HOME/.zshrc")"
     fi
-    if [ $? -eq 0 ]; then
-        echo "Alias successfully created in ~/.zshrc"
-    else
-        echo "Failed to create alias in ~/.zshrc"
-    fi
 fi
 
-# Check if Fish is the current shell
-if [[ "$(basename "$0")" == "fish" ]]; then
+if [[ "$SHELL" == *"/fish"* ]]; then
     echo "Setting up Daybegin for Fish..."
     backup_file "$(expand_tilde "$HOME/.config/fish/config.fish")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
     echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
-    if [ $? -eq 0 ]; then
-        echo "Alias successfully created in Fish configuration"
-    else
-        echo "Failed to create alias in Fish configuration"
-    fi
 fi
 
 echo "Daybegin setup complete! You can now use the 'daybegin' command to run Daybegin."
