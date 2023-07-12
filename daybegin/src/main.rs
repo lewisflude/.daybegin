@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::{config::Config, shell::execute_shell_commands};
 use anyhow::{Context, Result};
 use clap::{App, Arg};
 use log::{debug, info, LevelFilter};
@@ -92,13 +92,6 @@ fn launch_applications(config: &Config) -> Result<()> {
 fn wait_for_applications(config: &Config) -> Result<(), anyhow::Error> {
     if let Err(err) = application::wait_for_applications(&config.applications, &config) {
         anyhow::bail!("Error waiting for applications: {}", err);
-    }
-    Ok(())
-}
-
-fn execute_shell_commands(config: &Config) -> Result<()> {
-    for command in &config.shell_commands {
-        let _ = shell::execute_shell_command(command);
     }
     Ok(())
 }
