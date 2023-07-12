@@ -40,16 +40,24 @@ fn main() -> Result<()> {
     debug!("Loaded config: {:?}", config);
 
     // Sync the Git repository
-    sync_git_repo(&config)?;
+    if !config.git_branch.is_empty() {
+        sync_git_repo(&config)?;
+    }
 
     // Launch applications
-    launch_applications(&config)?;
+    if !config.applications.is_empty() {
+        launch_applications(&config)?;
+    }
 
     // Wait for launched applications to finish
-    wait_for_applications(&config)?;
+    if !config.applications.is_empty() {
+        wait_for_applications(&config)?;
+    }
 
     // Execute shell commands
-    execute_shell_commands(&config)?;
+    if !config.shell_commands.is_empty() {
+        execute_shell_commands(&config)?;
+    }
 
     info!("daybegin completed");
     Ok(())
