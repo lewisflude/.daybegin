@@ -25,7 +25,7 @@ To install Daybegin, simply run the following command in your terminal:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/lewisflude/.daybegin/main/setup_daybegin.sh)"
-
+```
 
 ## Usage
 
@@ -40,4 +40,3 @@ We welcome contributions from everyone! If you'd like to contribute to Daybegin,
 - Fork the repository and create a new branch for your feature or bug fix.
 - Make your changes and ensure the code passes all tests.
 - Submit a pull request with a clear description of your changes.
-```
