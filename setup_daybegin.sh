@@ -52,6 +52,11 @@ if [ -n "$ZSH_VERSION" ]; then
     if [ -f "$(expand_tilde "$HOME/.zshrc")" ]; then
         echo "source $(expand_tilde "~/.zshrc")" >> "$(expand_tilde "$HOME/.zshrc")"
     fi
+    if [ $? -eq 0 ]; then
+        echo "Alias successfully created in ~/.zshrc"
+    else
+        echo "Failed to create alias in ~/.zshrc"
+    fi
 fi
 
 # Check if Fish is available
@@ -60,6 +65,11 @@ if command -v fish >/dev/null 2>&1; then
     backup_file "$(expand_tilde "$HOME/.config/fish/config.fish")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
     echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
+    if [ $? -eq 0 ]; then
+        echo "Alias successfully created in Fish configuration"
+    else
+        echo "Failed to create alias in Fish configuration"
+    fi
 fi
 
 echo "Daybegin setup complete! You can now use the 'daybegin' command to run Daybegin."
