@@ -24,7 +24,7 @@ Let's get started with Daybegin! Follow these simple steps to set it up on your 
 To install Daybegin, simply run the following command in your terminal:
 
 ```bash
-source <(curl -fsSL https://raw.githubusercontent.com/lewisflude/.daybegin/main/setup_daybegin.sh)
+curl -fsSL https://raw.githubusercontent.com/lewisflude/.daybegin/main/setup_daybegin.sh | sh
 ```
 
 ## Usage
