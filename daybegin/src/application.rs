@@ -1,52 +1,77 @@
-use anyhow::{Context, Result};
-use log::info;
-use std::process::Command;
+use std::io::{self};
+use std::process::{Command, Output};
 
-pub fn launch_application(app: &str) -> Result<()> {
-    info!("Launching application: {}", app);
-
-    #[cfg(target_os = "macos")]
-    {
-        let output = Command::new("open")
-            .arg("-a")
-            .arg(app)
-            .output()
-            .with_context(|| format!("Failed to launch application: {}", app))?;
-        log_output(output)?;
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        let output = Command::new("xdg-open")
-            .arg(app)
-            .output()
-            .with_context(|| format!("Failed to launch application: {}", app))?;
-        log_output(output)?;
-    }
-
-    #[cfg(target_os = "windows")]
-    {
-        let output = Command::new("cmd")
-            .arg("/C")
-            .arg("start")
-            .arg(app)
-            .output()
-            .with_context(|| format!("Failed to launch application: {}", app))?;
-        log_output(output)?;
-    }
-
-    Ok(())
+pub struct CommandResult {
+    pub exit_status: std::process::ExitStatus,
+    pub stdout: String,
+    pub stderr: String,
 }
 
-fn log_output(output: std::process::Output) -> Result<()> {
-    if !output.stdout.is_empty() {
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        info!("Stdout: {}", stdout);
+pub fn launch_application(application: &str) -> io::Result<CommandResult> {
+    if application.is_empty() {
+        return Err(io::Error::new(io::ErrorKind::InvalidInput, "Empty command"));
     }
 
-    if !output.stderr.is_empty() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        info!("Stderr: {}", stderr);
+    let mut command = if cfg!(target_os = "windows") {
+        Command::new("cmd")
+    } else {
+        Command::new("sh")
+    };
+
+    command.args(&["/C", application]);
+
+    let output = command.output().map_err(|err| {
+        io::Error::new(
+            io::ErrorKind::Other,
+            format!("Failed to execute application '{}': {}", application, err),
+        )
+    })?;
+
+    let CommandResult {
+        exit_status,
+        stdout,
+        stderr,
+    } = process_output(output);
+
+    if exit_status.success() {
+        Ok(CommandResult {
+            exit_status,
+            stdout,
+            stderr,
+        })
+    } else {
+        eprintln!("Error executing application '{}': {}", application, stderr);
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("Command execution error: {}", stderr),
+        ))
+    }
+}
+
+fn process_output(output: Output) -> CommandResult {
+    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+
+    CommandResult {
+        exit_status: output.status,
+        stdout,
+        stderr,
+    }
+}
+
+pub fn wait_for_applications(applications: &[String]) -> io::Result<()> {
+    for application in applications {
+        let command_result = launch_application(application)?;
+
+        if !command_result.exit_status.success() {
+            return Err(io::Error::new(
+                io::ErrorKind::Other,
+                format!(
+                    "Application '{}' exited with non-zero status code",
+                    application
+                ),
+            ));
+        }
     }
 
     Ok(())

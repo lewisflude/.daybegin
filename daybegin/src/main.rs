@@ -1,3 +1,6 @@
+use std::env;
+
+use crate::config::Config;
 use anyhow::{Context, Result};
 use clap::{App, Arg};
 use log::{debug, info, LevelFilter};
@@ -7,8 +10,10 @@ mod config;
 mod git;
 mod shell;
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
+    let current_dir = env::current_dir().expect("Failed to get current directory");
+    println!("Current directory: {:?}", current_dir);
+
     // Parse command-line arguments
     let matches = App::new("daybegin")
         .version("0.1.0")
@@ -39,21 +44,17 @@ async fn main() -> Result<()> {
     let config = config::Config::load().context("Failed to load configuration")?;
     debug!("Loaded config: {:?}", config);
 
-    // Execute Git operations
-    git::sync_git_repo(config.git_branch.as_ref()).context("Failed to sync Git repository")?;
-    info!("Git operations completed");
-
-    // Execute shell commands
-    for command in config.shell_commands.unwrap_or_default() {
-        shell::execute_shell_command(&command).context("Failed to execute shell command")?;
-    }
-    info!("Shell commands executed");
+    // Sync the Git repository
+    sync_git_repo(&config)?;
 
     // Launch applications
-    for app in config.applications.unwrap_or_default() {
-        application::launch_application(&app).context("Failed to launch application")?;
-    }
-    info!("Applications launched");
+    launch_applications(&config)?;
+
+    // Wait for launched applications to finish
+    wait_for_applications(&config)?;
+
+    // Execute shell commands
+    execute_shell_commands(&config)?;
 
     info!("daybegin completed");
     Ok(())
@@ -70,5 +71,41 @@ fn setup_logging(verbose: bool) -> Result<()> {
     builder.filter(None, log_level);
     builder.init();
 
+    Ok(())
+}
+
+fn sync_git_repo(config: &Config) -> Result<()> {
+    git::perform_standard_git_steps(&config.git_branch).with_context(|| {
+        format!(
+            "Failed to sync Git repository with branch: {}",
+            &config.git_branch
+        )
+    })?;
+    info!("Git repository synchronized");
+    Ok(())
+}
+
+fn launch_applications(config: &Config) -> Result<()> {
+    for app in &config.applications {
+        application::launch_application(app)
+            .with_context(|| format!("Failed to launch application: {}", app))?;
+        info!("Application {} launched", app);
+    }
+    Ok(())
+}
+
+fn wait_for_applications(config: &Config) -> Result<(), anyhow::Error> {
+    if let Err(err) = application::wait_for_applications(&config.applications) {
+        anyhow::bail!("Error waiting for applications: {}", err);
+    }
+    Ok(())
+}
+
+fn execute_shell_commands(config: &Config) -> Result<()> {
+    for command in &config.shell_commands {
+        shell::execute_shell_command(command)
+            .with_context(|| format!("Failed to execute shell command: {}", command))?;
+        info!("Shell command {} executed", command);
+    }
     Ok(())
 }
