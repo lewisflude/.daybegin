@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Confirm Installation
-read -p "Do you want to install Daybegin? (y/n): " choice
-if [[ $choice != [Yy] ]]; then
-    echo "Installation canceled."
-    exit 0
-fi
-
-# Error Handling
 set -eo pipefail
 
 # Expand Tildas to Home Directory
