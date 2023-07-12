@@ -35,16 +35,16 @@ fi
 # Clone the Daybegin repository from GitHub to ~/.daybegin
 git clone https://github.com/lewisflude/.daybegin.git "$(expand_tilde "~/.daybegin")"
 
-# Check if Bash is available
-if [ -n "$BASH_VERSION" ]; then
+# Check if Bash is the current shell
+if [[ "$(basename "$0")" == "bash" ]]; then
     echo "Setting up Daybegin for Bash..."
     backup_file "$(expand_tilde "$HOME/.bashrc")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.bashrc")"
     echo "source $(expand_tilde "~/.daybegin/daybegin.sh")" >> "$(expand_tilde "$HOME/.bashrc")"
 fi
 
-# Check if Zsh is available
-if [ -n "$ZSH_VERSION" ]; then
+# Check if Zsh is the current shell
+if [[ "$(basename "$0")" == "zsh" ]]; then
     echo "Setting up Daybegin for Zsh..."
     backup_file "$(expand_tilde "$HOME/.zshrc")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.zshrc")"
@@ -59,8 +59,8 @@ if [ -n "$ZSH_VERSION" ]; then
     fi
 fi
 
-# Check if Fish is available
-if command -v fish >/dev/null 2>&1; then
+# Check if Fish is the current shell
+if [[ "$(basename "$0")" == "fish" ]]; then
     echo "Setting up Daybegin for Fish..."
     backup_file "$(expand_tilde "$HOME/.config/fish/config.fish")"
     echo "alias daybegin='$(expand_tilde "~/.daybegin/daybegin.sh")'" >> "$(expand_tilde "$HOME/.config/fish/config.fish")"
