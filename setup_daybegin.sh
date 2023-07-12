@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clone the Daybegin repository from GitHub to ~/.daybegin
-git clone https://github.com/lewisflude/daybegin.git ~/.daybegin
+git clone https://github.com/lewisflude/.daybegin.git ~/.daybegin
 
 # Check if Bash is available
 if [ -n "$BASH_VERSION" ]; then
