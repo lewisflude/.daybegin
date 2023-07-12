@@ -1,4 +1,5 @@
-root_dir = "/path/to/.daybegin"
+root_dir = "~/.daybegin"
+manifest_path = "~/.daybegin/daybegin/Cargo.toml"
 work_dir = "~/my_project"
 git_branch = "main"
 shell_commands = ["make clean", "make build"]
