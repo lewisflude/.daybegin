@@ -1,10 +1,5 @@
+root_dir = "/path/to/.daybegin"
 work_dir = "~/my_project"
 git_branch = "main"
-shell_commands = [
-  "make clean",
-  "make build"
-]
-applications = [
-  "Docker",
-  "Visual Studio Code"
-]
+shell_commands = ["make clean", "make build"]
+applications = ["Docker", "Visual Studio Code"]

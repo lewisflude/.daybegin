@@ -2,12 +2,13 @@ use anyhow::{Context, Result};
 use clap::{App, Arg};
 use log::{debug, info, LevelFilter};
 
+mod application;
 mod config;
 mod git;
 mod shell;
-mod application;
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     // Parse command-line arguments
     let matches = App::new("daybegin")
         .version("0.1.0")
@@ -37,9 +38,6 @@ fn main() -> Result<()> {
     // Load configuration
     let config = config::Config::load().context("Failed to load configuration")?;
     debug!("Loaded config: {:?}", config);
-
-    // Change directory
-    change_directory(config.work_dir.as_deref())?;
 
     // Execute Git operations
     git::sync_git_repo(config.git_branch.as_ref()).context("Failed to sync Git repository")?;
@@ -71,25 +69,6 @@ fn setup_logging(verbose: bool) -> Result<()> {
     let mut builder = env_logger::Builder::new();
     builder.filter(None, log_level);
     builder.init();
-
-    Ok(())
-}
-
-fn change_directory(work_dir: Option<&str>) -> Result<()> {
-    if let Some(dir) = work_dir {
-        let path = shellexpand::tilde(dir).into_owned();
-        let mut absolute_path = std::path::PathBuf::from(&path);
-
-        if !absolute_path.is_absolute() {
-            let current_dir = std::env::current_dir().context("Failed to get current directory")?;
-            absolute_path = current_dir.join(&path);
-        }
-
-        std::env::set_current_dir(&absolute_path)
-            .with_context(|| format!("Failed to change directory to {:?}", &absolute_path))?;
-
-        info!("Changed directory to: {:?}", &absolute_path);
-    }
 
     Ok(())
 }
