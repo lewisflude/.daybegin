@@ -62,13 +62,15 @@ fn main() -> Result<()> {
 }
 
 fn setup_logging(verbose: bool) -> Result<()> {
-    let level = if verbose {
+    let log_level = if verbose {
         LevelFilter::Debug
     } else {
         LevelFilter::Info
     };
 
-    env_logger::builder().filter_level(level).init();
+    let mut builder = env_logger::Builder::new();
+    builder.filter(None, log_level);
+    builder.init();
 
     Ok(())
 }
