@@ -1,5 +1,3 @@
-use std::env;
-
 use crate::config::Config;
 use anyhow::{Context, Result};
 use clap::{App, Arg};
@@ -11,9 +9,6 @@ mod git;
 mod shell;
 
 fn main() -> Result<()> {
-    let current_dir = env::current_dir().expect("Failed to get current directory");
-    println!("Current directory: {:?}", current_dir);
-
     // Parse command-line arguments
     let matches = App::new("daybegin")
         .version("0.1.0")
@@ -87,7 +82,7 @@ fn sync_git_repo(config: &Config) -> Result<()> {
 
 fn launch_applications(config: &Config) -> Result<()> {
     for app in &config.applications {
-        application::launch_application(app)
+        application::launch_application(app, &config)
             .with_context(|| format!("Failed to launch application: {}", app))?;
         info!("Application {} launched", app);
     }
@@ -95,7 +90,7 @@ fn launch_applications(config: &Config) -> Result<()> {
 }
 
 fn wait_for_applications(config: &Config) -> Result<(), anyhow::Error> {
-    if let Err(err) = application::wait_for_applications(&config.applications) {
+    if let Err(err) = application::wait_for_applications(&config.applications, &config) {
         anyhow::bail!("Error waiting for applications: {}", err);
     }
     Ok(())

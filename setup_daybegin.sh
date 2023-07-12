@@ -30,14 +30,14 @@ git clone https://github.com/lewisflude/.daybegin.git "$(expand_tilde "~/.daybeg
 # Check if Bash is available
 if [ -n "$BASH_VERSION" ]; then
   echo "Setting up Daybegin for Bash..."
-  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.bashrc
+  echo "alias daybegin='source ~/.daybegin/daybegin.sh'" >> ~/.bashrc
   echo "source ~/.daybegin/daybegin.sh" >> ~/.bashrc
 fi
 
 # Check if Zsh is available
 if [ -n "$ZSH_VERSION" ]; then
   echo "Setting up Daybegin for Zsh..."
-  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.zshrc
+  echo "alias daybegin='source ~/.daybegin/daybegin.sh'" >> ~/.zshrc
   echo "source ~/.daybegin/daybegin.sh" >> ~/.zshrc
   echo "source ~/.zshrc" >> ~/.zshrc
 fi
@@ -45,7 +45,7 @@ fi
 # Check if Fish is available
 if command -v fish >/dev/null 2>&1; then
   echo "Setting up Daybegin for Fish..."
-  echo "alias daybegin='~/.daybegin/daybegin.sh'" >> ~/.config/fish/config.fish
+  echo "alias daybegin='source ~/.daybegin/daybegin.sh'" >> ~/.config/fish/config.fish
   echo "source ~/.daybegin/daybegin.sh" >> ~/.config/fish/config.fish
 fi
 

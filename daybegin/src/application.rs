@@ -1,4 +1,5 @@
-use std::io::{self};
+use crate::config::Config;
+use std::io::{self, Error, ErrorKind};
 use std::process::{Command, Output};
 
 pub struct CommandResult {
@@ -7,20 +8,31 @@ pub struct CommandResult {
     pub stderr: String,
 }
 
-pub fn launch_application(application: &str) -> io::Result<CommandResult> {
+pub fn launch_application(application: &str, config: &Config) -> io::Result<CommandResult> {
     if application.is_empty() {
-        return Err(io::Error::new(io::ErrorKind::InvalidInput, "Empty command"));
+        return Err(Error::new(ErrorKind::InvalidInput, "Empty command"));
     }
 
     let mut command = if cfg!(target_os = "windows") {
         Command::new("cmd")
+    } else if cfg!(target_os = "macos") {
+        Command::new("open")
     } else {
         Command::new("sh")
     };
 
-    command.args(&["/C", application]);
+    if cfg!(target_os = "windows") {
+        command.args(&["/C", application]);
+    } else {
+        command.arg(application);
+    }
 
-    let output = command.output().map_err(|err| {
+    let output = if cfg!(target_os = "macos") {
+        command.current_dir(&config.app_dir).output()
+    } else {
+        command.output()
+    }
+    .map_err(|err| {
         io::Error::new(
             io::ErrorKind::Other,
             format!("Failed to execute application '{}': {}", application, err),
@@ -41,8 +53,8 @@ pub fn launch_application(application: &str) -> io::Result<CommandResult> {
         })
     } else {
         eprintln!("Error executing application '{}': {}", application, stderr);
-        Err(io::Error::new(
-            io::ErrorKind::Other,
+        Err(Error::new(
+            ErrorKind::Other,
             format!("Command execution error: {}", stderr),
         ))
     }
@@ -59,9 +71,9 @@ fn process_output(output: Output) -> CommandResult {
     }
 }
 
-pub fn wait_for_applications(applications: &[String]) -> io::Result<()> {
+pub fn wait_for_applications(applications: &[String], config: &Config) -> io::Result<()> {
     for application in applications {
-        let command_result = launch_application(application)?;
+        let command_result = launch_application(application, config)?;
 
         if !command_result.exit_status.success() {
             return Err(io::Error::new(

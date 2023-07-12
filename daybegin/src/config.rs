@@ -12,17 +12,30 @@ pub struct Config {
     pub git_branch: String,
     pub shell_commands: Vec<String>,
     pub applications: Vec<String>,
+    pub app_dir: String, // New field for the applications directory
 }
 
 impl Default for Config {
     fn default() -> Self {
+        let app_dir = if cfg!(target_os = "macos") {
+            "/Applications"
+        } else if cfg!(target_os = "windows") {
+            "C:\\Program Files"
+        } else {
+            "/usr/bin"
+        };
+
         Self {
             root_dir: String::from("~/.daybegin"),
             manifest_path: String::from("~/.daybegin/daybegin/Cargo.toml"),
             work_dir: String::from("~/my_project"),
             git_branch: String::from("main"),
             shell_commands: vec![String::from("make clean"), String::from("make build")],
-            applications: vec![String::from("Docker"), String::from("Visual Studio Code")],
+            applications: vec![
+                String::from("Docker.app"),
+                String::from("Visual Studio Code.app"),
+            ],
+            app_dir: String::from(app_dir),
         }
     }
 }
@@ -59,6 +72,7 @@ impl Config {
             git_branch: String::new(),
             shell_commands: default_config.shell_commands.clone(),
             applications: default_config.applications.clone(),
+            app_dir: default_config.app_dir.clone(),
         };
 
         println!("🌞 Let's create a new config file for Daybegin! 🌞");

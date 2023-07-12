@@ -1,6 +1,7 @@
 root_dir = "~/.daybegin"
 manifest_path = "~/.daybegin/daybegin/Cargo.toml"
-work_dir = ""
-git_branch = ""
+work_dir = "~/Code/translucent"
+git_branch = "main"
 shell_commands = ["make nuke", "pnpm install", "make all", "pnpm dev"]
-applications = [""]
+applications = ["Docker.app", "Visual Studio Code.app", "Arc.app"]
+app_dir = "/Applications"
